@@ -3,7 +3,7 @@ import asyncio
 from dotenv import load_dotenv
 
 # Add Azure OpenAI package
-
+from openai import AzureOpenAI
 
 # Set to True to print the full response from OpenAI for each call
 printFullResponse = False
@@ -17,9 +17,14 @@ async def main():
         azure_oai_endpoint = os.getenv("AZURE_OAI_ENDPOINT")
         azure_oai_key = os.getenv("AZURE_OAI_KEY")
         azure_oai_deployment = os.getenv("AZURE_OAI_DEPLOYMENT")
-        
+        azure_oai_model = os.getenv("AZURE_OAI_MODEL")
+        azure_oai_api_version = os.getenv("AZURE_OAI_API_VERSION")
         # Configure the Azure OpenAI client
-        
+        client = AzureOpenAI(
+            azure_endpoint = azure_oai_endpoint, 
+            api_key=azure_oai_key,  
+            api_version=azure_oai_api_version
+        )
 
         while True:
             # Pause the app to allow the user to enter the system prompt
@@ -44,7 +49,18 @@ async def main():
 
 async def call_openai_model(system_message, user_message, model, client):
     # Format and send the request to the model
-    
+    messages =[
+        {"role": "system", "content": system_message},
+        {"role": "user", "content": user_message},
+    ]
+
+    # Call the Azure OpenAI model
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        temperature=0.7,
+        max_tokens=800
+    )
 
 
     if printFullResponse:
@@ -53,4 +69,5 @@ async def call_openai_model(system_message, user_message, model, client):
     print("Response:\n" + response.choices[0].message.content + "\n")
 
 if __name__ == '__main__': 
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     asyncio.run(main())
