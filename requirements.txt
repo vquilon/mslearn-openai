@@ -1,1 +1,8 @@
 openai
+azure-ai-projects
+azure-core-tracing-opentelemetry
+azure-monitor-opentelemetry
+azure-ai-inference[opentelemetry]
+opentelemetry-sdk
+opentelemetry-instrumentation-openai-v2
+opentelemetry-exporter-otlp
